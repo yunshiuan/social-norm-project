@@ -32,14 +32,14 @@ import sys
 #-Parameters
 # Switch to TRUE for real session 
 # (note that when using the fullscreen, it is hard to abort the sesion)
-useFullScreen = False 
-frame_rate = 1
-message_dur = 3 * frame_rate # message time
-rating_dur = 2 * frame_rate # rating time
-fixation_dur = 1.5 # pre-task fixation (the fixation between trials is a random int between 1 and 5)
-button_labels = { '1': 0, '2': 1, '3': 2, '4': 3 }
-buttons = button_labels.keys()
-instruct_dur = 8 * frame_rate
+USE_FULL_SCREEN = False 
+FRAME_RATE = 1
+MESSAGE_DUR = 3 * FRAME_RATE # message time
+RATING_DUR = 2 * FRAME_RATE # rating time
+FIXATION_DUR = 1.5 # pre-task fixation (the fixation between trials is a random int between 1 and 5)
+BUTTON_LABELS = { '1': 0, '2': 1, '3': 2, '4': 3 }
+BUTTONS = BUTTON_LABELS.keys()
+INSTRUCT_DUR = 8 * FRAME_RATE
 
 #-Path
 # #Change working directory to where the script locates
@@ -76,7 +76,7 @@ run_data = {
 
 # Set up window
 # use the unit 'deg' (see: https://www.psychopy.org/general/monitors.html)
-win=visual.Window([1024,768], fullscr=useFullScreen, monitor='testMonitor', units='deg')
+win = visual.Window([1024,768], fullscr=USE_FULL_SCREEN, monitor='testMonitor', units='deg')
 
 # Define Stimulus
 ready_screen = visual.TextStim(win, text="Ready.....", height=1.5, color="#FFFFFF")
@@ -195,16 +195,16 @@ def do_run(run_number, trials):
     timer.reset()
     
     #Change to the next slide:
-    # - "Please review..." for "instruct_dur" (8s)
-    while timer.getTime() < instruct_dur:
+    # - "Please review..." for "INSTRUCT_DUR" (8s)
+    while timer.getTime() < INSTRUCT_DUR:
         instruction_text.draw()
         win.flip() 
 
 
     timer.reset()
     #Change to the next slide:
-    # - "pre-task fixation" for "fixation_dur" (1.5 s)
-    while timer.getTime() < fixation_dur:
+    # - "pre-task fixation" for "FIXATION_DUR" (1.5 s)
+    while timer.getTime() < FIXATION_DUR:
         fixation.draw()
         win.flip()
 
@@ -226,8 +226,8 @@ def do_run(run_number, trials):
         trials.addData('stim_onset', globalClock.getTime())
         timer.reset()
         #Change to the next slide:---------------------------------
-        # - "trial picture" for "message_dur" (3s)
-        while timer.getTime() < message_dur:
+        # - "trial picture" for "MESSAGE_DUR" (3s)
+        while timer.getTime() < MESSAGE_DUR:
             pictureStim_image1.draw()
             win.flip()
 
@@ -240,10 +240,10 @@ def do_run(run_number, trials):
         resp_onset = globalClock.getTime()
 
         #Change to the next slide:---------------------------------
-        # - trial picture along with"rating" for "rating_dur" (2s)
+        # - trial picture along with"rating" for "RATING_DUR" (2s)
         # show rating and collect response
         timer.reset()
-        while timer.getTime() < rating_dur:
+        while timer.getTime() < RATING_DUR:
             # draw the trial picture
             pictureStim_image1.draw()
             
@@ -255,14 +255,14 @@ def do_run(run_number, trials):
             # Show the rating stimulus
             win.flip() 
             # get key response
-            resp = event.getKeys(keyList = buttons)
+            resp = event.getKeys(keyList = BUTTONS)
             # the case when the subject did press a button
             if len(resp) > 0 :
                 # get the first button response
                 resp_value = resp[0]
                 # Mark the pressed value as red 
                 # (will be shown at the next win.flip())
-                ratingStim[button_labels[resp_value]].setColor('red')
+                ratingStim[BUTTON_LABELS[resp_value]].setColor('red')
                 
                 # Logging: add response value to the trial handler logging
                 trials.addData('resp',resp_value)
@@ -275,7 +275,7 @@ def do_run(run_number, trials):
         image2 = "images/image2/image_in_progress.png"
         pictureStim_image2.setImage(image2)
         timer.reset()        
-        while timer.getTime() < message_dur:
+        while timer.getTime() < MESSAGE_DUR:
             pictureStim_image2.draw()
             win.flip()
         
@@ -291,9 +291,9 @@ def do_run(run_number, trials):
         
         timer.reset()
         #Change to the next slide:
-        # - "rating" for "rating_dur" (1-5s)
+        # - "rating" for "RATING_DUR" (1-5s)
         while timer.getTime() < fixation_for_trial:
-        #for frame in range(fixation_dur):
+        #for frame in range(FIXATION_DUR):
             fixation.draw()
             win.flip()
     # End of all trials
