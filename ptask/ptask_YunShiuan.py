@@ -38,16 +38,10 @@ button_labels = { '1': 0, '2': 1, '3': 2, '4': 3 }
 buttons = button_labels.keys()
 instruct_dur = 8 * frame_rate
 
-
-
-
-
 # get subjID
 subjDlg = gui.Dlg(title="HMS Messages Task")
 subjDlg.addField('Enter Subject ID:')
 subjDlg.show()
-
-
 
 if gui.OK:
     # This will save the key-in value to subj_id
@@ -138,30 +132,23 @@ print(fixations)
 # setup logging #
 
 log_file = logging.LogFile("logs/%s.log" % (subj_id),  level=logging.DATA, filemode="w")
-
-
 globalClock = core.Clock()
-
 logging.setDefaultClock(globalClock)
 
 # def do_sound_test():
-
 #     timer = core.Clock()
-
 #     test_message_text = '''blah'''
-
 
 
 def do_run(run_number, trials):
     timer = core.Clock()
     ##############################
 
-
     # 1. display ready screen and wait for 't' to be sent to indicate scanner trigger
     ready_screen.draw()
     
     # Change to the next slide
-    win.flip()
+    win.flip() #showing "Ready"
 
     # wait until the key 't' appears
     event.waitKeys(keyList='t') 
@@ -181,15 +168,17 @@ def do_run(run_number, trials):
 
 
     timer.reset()
-
+    
+    #Change to the next slide:
+    # - "Please review..." for the duration of "instruct_dur" (8s)
     while timer.getTime() < instruct_dur:
         instruction_text.draw()
-        win.flip() #Change to the next slide ("Please review...")
+        win.flip() 
 
 
     timer.reset()
-
-
+    #Change to the next slide:
+    # - "fixation" for the duration of "fixation_dur" (s)
     while timer.getTime() < fixation_dur:
         fixation.draw()
         win.flip()
@@ -198,10 +187,8 @@ def do_run(run_number, trials):
     ################
 
     # MAIN LOOP
-
     # present trials
-
-    for tidx, trial in enumerate(trials):
+    for tidx, trial in enumerate(trials.trialList):
         trial_type = trial['type']
         theme = trial['theme']
         cond = trial['cond']
@@ -231,8 +218,8 @@ def do_run(run_number, trials):
             for rate_stim in ratingStim:
                 rate_stim.draw()
             anchor1.draw()
-            anchor4.draw()
-            win.flip()
+            anchor4.draw() 
+            win.flip() #Show the rating stimulus
             # get key response
             resp = event.getKeys(keyList = buttons)
             if len(resp) > 0 :
@@ -273,7 +260,6 @@ def do_run(run_number, trials):
 for idx, run in enumerate(runs):
     
     #print(run)
-    
     trials = data.TrialHandler(run, nReps=1, extraInfo=run_data, dataTypes=['stim_onset', 'resp_onset', 'rt', 'resp'], method="random")
     
     nextrun = idx+1
