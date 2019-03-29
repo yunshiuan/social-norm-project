@@ -9,10 +9,14 @@
 # (1) MESSAGE TASK for SES Persuasion Study
 # (2) Timings:
 #   Message   5 secq
-#   Relevance rating  2 secq
-#   Fixation  1.5 sec (need to take this out --> with 5 dispersed rest fixations of 12 secs)
-#   trials    72 (18 Future/Gain + 18 Future/Loss + 18 Present/Gain + 18 Present/Loss)
-
+# (3)
+# In the social norms code, we need to run 72 loops of this sequence: 
+# Each run has 36 trials
+#-- fixation cross (1-5 seconds)
+#-- image1 (3 seconds)
+#---- trials: 72 (18 Future/Gain + 18 Future/Loss + 18 Present/Gain + 18 Present/Loss)
+#-- Feedback -- button box feedback  "Do you practice [norm]?" with a 1-4 Likert scale (2 seconds)
+#-- image2 (3 seconds) 
 # Import modules
 import csv #imports excel .csv files
 from psychopy import visual, core, event, gui, data, sound, logging # imports libraries from psycho py
@@ -20,23 +24,33 @@ import datetime
 import random
 import sys
 
-# Change working directory to where the script locates
-import os
-# os.getcwd()
-PATH_ROOT = '/Users/vimchiz/GitLab_local/social-norm-project/ptask'
-os.chdir(PATH_ROOT)
 
 
-# Constants
+
+#################### Constants ####################
+
+#-Parameters
 useFullScreen = False
 frame_rate = 1
-message_dur = 5 * frame_rate # message time
-rating_dur = 2 * frame_rate # question time
-fixation_dur = 1.5 # fixation cross time  -- THIS DURATION NEEDS TO BE RANDOM
-disdaq_dur = 8 * frame_rate # need to figure out what this is defining
+message_dur = 3 * frame_rate # message time
+rating_dur = 2 * frame_rate # rating time
+fixation_dur = 1.5 # pre-task fixation (the fixation between trials is a random int between 1 and 5)
 button_labels = { '1': 0, '2': 1, '3': 2, '4': 3 }
 buttons = button_labels.keys()
 instruct_dur = 8 * frame_rate
+
+#-Path
+# #Change working directory to where the script locates
+#import os
+#os.getcwd()
+#PATH_ROOT = '/Users/vimchiz/GitLab_local/social-norm-project/ptask'
+#os.chdir(PATH_ROOT)
+
+#-File
+#This could be adjusted according to the number of stimulus
+FILE_STIMULI_LIST = 'stimuli.csv' 
+
+#################### Set up Environment ####################
 
 # get subjID
 subjDlg = gui.Dlg(title="HMS Messages Task")
@@ -85,53 +99,59 @@ rate3 = visual.TextStim(win,text='3', color="#FFFFFF", pos=(3,-4))
 rate4 = visual.TextStim(win,text='4', color="#FFFFFF", pos=(8,-4))
 ratingStim = [rate1, rate2, rate3, rate4]
 
-anchor1 = visual.TextStim(win, text='Not\neffective', color="#FFFFFF", pos=(-8,-6))
-anchor4 = visual.TextStim(win, text='Effective', color="#FFFFFF", pos=(8,-6))
+anchor1 = visual.TextStim(win, text='Never', color="#FFFFFF", pos=(-8,-6))
+anchor4 = visual.TextStim(win, text='Very\nOften', color="#FFFFFF", pos=(8,-6))
 
 # instrcution screen
 #instruction_image = visual.SimpleImageStim(win,image="buttonpad.png",pos=(-1,-3.5))
 instruction_text = visual.TextStim(win, height=1.3,color="#FFFFFF",
-        text="Please view each message carefully. \n\nThen use the keypad to indicate how effective you thought the message was. ",
+        text="Please view each message carefully. \n\nThen use the keypad to indicate how often you practice the activity. ",
         pos=(0,+5))
 
 
 test_instructions = visual.TextStim(win, text='', pos=(0,4), height=1.2, wrapWidth=20)
 
-lower = visual.TextStim(win, text='Button 1 = Reduce volume', pos=(0,1))
-higher = visual.TextStim(win, text='Button 2 = Increase volume', pos=(0,-1))
-ok = visual.TextStim(win, text='Button 4 = Volume is good', pos=(0,-3))
-stimuli = [i for i in csv.DictReader(open('stimuli.csv','rU'))]
+#lower = visual.TextStim(win, text='Button 1 = Reduce volume', pos=(0,1))
+#higher = visual.TextStim(win, text='Button 2 = Increase volume', pos=(0,-1))
+#ok = visual.TextStim(win, text='Button 4 = Volume is good', pos=(0,-3))
+stimuli = [i for i in csv.DictReader(open(FILE_STIMULI_LIST,'rU'))]
 
+# Randomize the order of stimuli (an OrderedDict)
+random.shuffle(stimuli)
 
 # set up trial handler
-runs = [ [], [] ]
-# half the stimuli are in the first run and half are in the second run
-for i in range(len(stimuli)):#
+# two runs, each with 36 trials
+runs = [[],[]]
 
-    # append a record to the first run
-     runs[0].append(stimuli[i])#
+for i in range(len(stimuli)):
+    # half of trials for the first run
+    if i<=len(stimuli)/2:
+        runs[0].append(stimuli[i])#
+    # half of trials for the second run
+    else:
+        runs[1].append(stimuli[i])
 
-    #else:
-    #    # append stimuli to the second run
-    #    runs[1].append(stimuli[i])
-
-fixations = [[], []]
-
-durs = [fixation_dur, fixation_dur, fixation_dur]
+# The fixation durations are random integer between 1 and 5
+fixations = [[], []] 
 
 for j in range(len(stimuli)):
-    #random fixation times?
-    fixations[0].append(random.randint(1,5))
+    #random fixation times
+    
+    # half of trials for the first run
+    if j<=len(stimuli)/2:
+        fixations[0].append(random.randint(1,5))
+    # half of trials for the second run
+    else:
+        fixations[1].append(random.randint(1,5))
 
-
-print(fixations)
+# print(fixations)
 
 
 ################
 
 # setup logging #
 
-log_file = logging.LogFile("logs/%s.log" % (subj_id),  level=logging.DATA, filemode="w")
+log_file = logging.LogFile("logs/%s.log" % (subj_id),  level=logging.DATA, filemode="w")######Remain to check the params
 globalClock = core.Clock()
 logging.setDefaultClock(globalClock)
 
@@ -139,6 +159,7 @@ logging.setDefaultClock(globalClock)
 #     timer = core.Clock()
 #     test_message_text = '''blah'''
 
+#################### Specify the do_run() function ####################
 
 def do_run(run_number, trials):
     timer = core.Clock()
@@ -170,7 +191,7 @@ def do_run(run_number, trials):
     timer.reset()
     
     #Change to the next slide:
-    # - "Please review..." for the duration of "instruct_dur" (8s)
+    # - "Please review..." for "instruct_dur" (8s)
     while timer.getTime() < instruct_dur:
         instruction_text.draw()
         win.flip() 
@@ -178,7 +199,7 @@ def do_run(run_number, trials):
 
     timer.reset()
     #Change to the next slide:
-    # - "fixation" for the duration of "fixation_dur" (s)
+    # - "pre-task fixation" for "fixation_dur" (1.5 s)
     while timer.getTime() < fixation_dur:
         fixation.draw()
         win.flip()
@@ -189,16 +210,19 @@ def do_run(run_number, trials):
     # MAIN LOOP
     # present trials
     for tidx, trial in enumerate(trials.trialList):
+        # Set up local parameters--------------------------------
+        # Image 1---------------------
         trial_type = trial['type']
         theme = trial['theme']
         cond = trial['cond']
-        image = "images/%s/%s_%s.png" % (cond, theme, trial_type)
+        image = "images/image1/%s/%s_%s.png" % (cond, theme, trial_type)
         pictureStim.setImage(image)
         # send MESSAGE log event
         logging.log(level=logging.DATA, msg="MESSAGE: %s - %s - %s" % (cond, theme, trial_type))
         trials.addData('stim_onset', globalClock.getTime())
         timer.reset()
-        
+        #Change to the next slide:---------------------------------
+        # - "trial picture" for "message_dur" (3s)
         while timer.getTime() < message_dur:
             pictureStim.draw()
             win.flip()
@@ -211,44 +235,73 @@ def do_run(run_number, trials):
         event.clearEvents()
         resp_onset = globalClock.getTime()
 
+        #Change to the next slide:---------------------------------
+        # - trial picture along with"rating" for "rating_dur" (2s)
         # show rating and collect response
         timer.reset()
         while timer.getTime() < rating_dur:
+            # draw the trial picture
             pictureStim.draw()
+            
+            # draw the rating scale and anchors
             for rate_stim in ratingStim:
                 rate_stim.draw()
             anchor1.draw()
-            anchor4.draw() 
-            win.flip() #Show the rating stimulus
+            anchor4.draw()
+            # Show the rating stimulus
+            win.flip() 
             # get key response
             resp = event.getKeys(keyList = buttons)
+            # the case when the subject did press a button
             if len(resp) > 0 :
+                # get the first button response
                 resp_value = resp[0]
+                # Mark the pressed value as red 
+                # (will be shown at the next win.flip())
                 ratingStim[button_labels[resp_value]].setColor('red')
-                # add response value to the trial handler logging
+                
+                # Logging: add response value to the trial handler logging
                 trials.addData('resp',resp_value)
                 trials.addData('rt', globalClock.getTime() - resp_onset)
-        # reset rating number color
+        # End of the rating slide
+        
+        #Change to the next slide:---------------------------------
+        # - image2 (3s)
+        # show rating and collect response
+        image2 = "images/image2/image_in_progress.png"
+        pictureStim.setImage(image2)
+        timer.reset()        
+        while timer.getTime() < message_dur:
+            pictureStim.draw()
+            win.flip()
+        
+        # Reset rating number color
         for rate in ratingStim:
             rate.setColor('#FFFFFF')
         # ------------ FIXATION ------------
-        # send FIXATION log event
+        # logging: send FIXATION log event
         logging.log(level=logging.DATA, msg='FIXATION')
-        # show fixation
-        timer.reset()
+        
+        # Get the fixation duration (a random int from 1 to 5)
         fixation_for_trial = fixations[run_number-1][tidx]
-
+        
+        timer.reset()
+        #Change to the next slide:
+        # - "rating" for "rating_dur" (1-5s)
         while timer.getTime() < fixation_for_trial:
         #for frame in range(fixation_dur):
             fixation.draw()
             win.flip()
+    # End of all trials
 
-    # send END log event
+    # Logging: Send END log event
     logging.log(level=logging.DATA, msg='******* END run %i *******' % run_number)
 
-    # save the trial infomation from trial handler
-    log_filename2 = "%s_%i.csv" % (log_filename[:-4], run_number )
-    trials.saveAsText(log_filename2, delim=',', dataOut=('n', 'all_raw'))
+
+    # Save the trial infomation from trial handler
+    log_filename2 = "%s_%i.csv" % (log_filename[:-4], run_number)
+    trials.saveAsText(log_filename2, delim=',', dataOut=('n', 'all_raw')) #####FAIL with "-1"
+    # Press 'space' to and the run (will move on to the next run if there is one)
     event.waitKeys(keyList=('space'))
 
 # =====================
@@ -256,8 +309,9 @@ def do_run(run_number, trials):
 #
 # - set up stimuli and runs
 #sys.exit()
+#################### MAIN ####################
 
-for idx, run in enumerate(runs):
+for idx, run in enumerate(runs): # 2 runs in total
     
     #print(run)
     trials = data.TrialHandler(run, nReps=1, extraInfo=run_data, dataTypes=['stim_onset', 'resp_onset', 'rt', 'resp'], method="random")
@@ -270,5 +324,11 @@ for idx, run in enumerate(runs):
     #print("stopping program here at: " + str(random.randint(0,100)))
     #sys.exit()
     
+win.close()
+core.quit()
 #sys.exit()
-    
+
+#trials.__dict__.keys()
+
+#dict_keys(['name', 'autoLog', 'trialList', 'nReps', 'nTotal', 'nRemaining', 'method', 'thisRepN', 'thisTrialN', 'thisN',
+#           'thisIndex', 'thisTrial', 'finished', 'extraInfo', 'seed', 'data', 'sequenceIndices', 'originPath', 'origin', '_exp'])

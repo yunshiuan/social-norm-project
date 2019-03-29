@@ -1,0 +1,9 @@
+cond,theme,type
+loss,Future,1
+loss,Present,1
+gain,Future,1
+gain,Present,1
+loss,Future,2
+loss,Present,2
+gain,Future,2
+gain,Present,2
