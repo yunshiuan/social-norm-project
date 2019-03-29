@@ -30,7 +30,9 @@ import sys
 #################### Constants ####################
 
 #-Parameters
-useFullScreen = False
+# Switch to TRUE for real session 
+# (note that when using the fullscreen, it is hard to abort the sesion)
+useFullScreen = False 
 frame_rate = 1
 message_dur = 3 * frame_rate # message time
 rating_dur = 2 * frame_rate # rating time
@@ -73,6 +75,7 @@ run_data = {
 }
 
 # Set up window
+# use the unit 'deg' (see: https://www.psychopy.org/general/monitors.html)
 win=visual.Window([1024,768], fullscr=useFullScreen, monitor='testMonitor', units='deg')
 
 # Define Stimulus
@@ -83,8 +86,9 @@ fixation = visual.TextStim(win,text='+', height=5, color="#FFFFFF") # Cross Fixa
 #             IMAGE
 #            message (no message needed, we are using pictures with messages)
 
-pictureStim = visual.ImageStim(win, pos=(0,6.5), size=(18,10) )
-
+#visual.ImageStim inherits the unit from "visual.Window (i.e., 'deg'")
+pictureStim_image1 = visual.ImageStim(win, pos=(0,6.5), size=(18,10) ) 
+pictureStim_image2 = visual.ImageStim(win, pos=(0,0), size=(36,20) )
 #  Response screen
 #           IMAGE (don't need)
 #        message (don't need)
@@ -216,7 +220,7 @@ def do_run(run_number, trials):
         theme = trial['theme']
         cond = trial['cond']
         image = "images/image1/%s/%s_%s.png" % (cond, theme, trial_type)
-        pictureStim.setImage(image)
+        pictureStim_image1.setImage(image)
         # send MESSAGE log event
         logging.log(level=logging.DATA, msg="MESSAGE: %s - %s - %s" % (cond, theme, trial_type))
         trials.addData('stim_onset', globalClock.getTime())
@@ -224,7 +228,7 @@ def do_run(run_number, trials):
         #Change to the next slide:---------------------------------
         # - "trial picture" for "message_dur" (3s)
         while timer.getTime() < message_dur:
-            pictureStim.draw()
+            pictureStim_image1.draw()
             win.flip()
 
         # send SHOW RATING log event
@@ -241,7 +245,7 @@ def do_run(run_number, trials):
         timer.reset()
         while timer.getTime() < rating_dur:
             # draw the trial picture
-            pictureStim.draw()
+            pictureStim_image1.draw()
             
             # draw the rating scale and anchors
             for rate_stim in ratingStim:
@@ -269,10 +273,10 @@ def do_run(run_number, trials):
         # - image2 (3s)
         # show rating and collect response
         image2 = "images/image2/image_in_progress.png"
-        pictureStim.setImage(image2)
+        pictureStim_image2.setImage(image2)
         timer.reset()        
         while timer.getTime() < message_dur:
-            pictureStim.draw()
+            pictureStim_image2.draw()
             win.flip()
         
         # Reset rating number color
