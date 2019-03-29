@@ -19,7 +19,7 @@
 #-- image2 (3 seconds) 
 # Import modules
 import csv #imports excel .csv files
-from psychopy import visual, core, event, gui, data, sound, logging # imports libraries from psycho py
+from psychopy import visual, core, event, gui, data, logging # imports libraries from psycho py
 import datetime
 import random
 import sys
@@ -28,7 +28,6 @@ import sys
 
 
 #################### Constants ####################
-
 #-Parameters
 # Switch to TRUE for real session 
 # (note that when using the fullscreen, it is hard to abort the sesion)
@@ -43,10 +42,10 @@ INSTRUCT_DUR = 8 * FRAME_RATE
 
 #-Path
 # #Change working directory to where the script locates
-#import os
-#os.getcwd()
-#PATH_ROOT = '/Users/vimchiz/GitLab_local/social-norm-project/ptask'
-#os.chdir(PATH_ROOT)
+import os
+os.getcwd()
+PATH_ROOT = '/Users/vimchiz/GitLab_local/social-norm-project/ptask'
+os.chdir(PATH_ROOT)
 
 #-File
 #This could be adjusted according to the number of stimulus
@@ -108,9 +107,9 @@ anchor4 = visual.TextStim(win, text='Very\nOften', color="#FFFFFF", pos=(8,-6))
 
 # instrcution screen
 #instruction_image = visual.SimpleImageStim(win,image="buttonpad.png",pos=(-1,-3.5))
-instruction_text = visual.TextStim(win, height=1.3,color="#FFFFFF",
-        text="Please view each message carefully. \n\nThen use the keypad to indicate how often you practice the activity. ",
-        pos=(0,+5))
+instruction_text = visual.TextStim(win,height=1.3,color="#FFFFFF",
+text="Please view each message carefully. \n\nThen use the keypad to indicate how often you practice the activity. ",
+    pos=(0,+5))
 
 
 test_instructions = visual.TextStim(win, text='', pos=(0,4), height=1.2, wrapWidth=20)
@@ -155,7 +154,7 @@ for j in range(len(stimuli)):
 
 # setup logging #
 
-log_file = logging.LogFile("logs/%s.log" % (subj_id),  level=logging.DATA, filemode="w")######Remain to check the params
+log_file = logging.LogFile("logs/%s.log" % (subj_id),  level=logging.DATA, filemode="w")
 globalClock = core.Clock()
 logging.setDefaultClock(globalClock)
 
@@ -168,22 +167,16 @@ logging.setDefaultClock(globalClock)
 def do_run(run_number, trials):
     timer = core.Clock()
     ##############################
-
     # 1. display ready screen and wait for 't' to be sent to indicate scanner trigger
     ready_screen.draw()
-    
     # Change to the next slide
     win.flip() #showing "Ready"
-
     # wait until the key 't' appears
     event.waitKeys(keyList='t') 
-
     # reset globalClock
     globalClock.reset()
-
     # send START log event
     logging.log(level=logging.DATA, msg='******* START (trigger from scanner) - run %i *******' % run_number)
-
 
     ################
 
@@ -191,9 +184,8 @@ def do_run(run_number, trials):
 
     ################
 
-
     timer.reset()
-    
+
     #Change to the next slide:
     # - "Please review..." for "INSTRUCT_DUR" (8s)
     while timer.getTime() < INSTRUCT_DUR:
@@ -319,7 +311,7 @@ for idx, run in enumerate(runs): # 2 runs in total
     
     #print(run)
     trials = data.TrialHandler(run, nReps=1, extraInfo=run_data, dataTypes=['stim_onset', 'resp_onset', 'rt', 'resp'], method="random")
-    
+
     nextrun = idx+1
     #print(trials)
     
