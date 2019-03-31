@@ -23,6 +23,7 @@ from psychopy import visual, core, event, gui, data, logging # imports libraries
 import datetime
 import random
 import sys
+import pdb
 
 
 
@@ -49,8 +50,7 @@ os.chdir(PATH_ROOT)
 
 #-File
 #This could be adjusted according to the number of stimulus
-FILE_STIMULI_LIST = 'stimuli.csv' 
-
+FILE_STIMULI_LIST = 'stimuli_v2.csv' 
 #################### Set up Environment ####################
 
 # get subjID
@@ -212,6 +212,7 @@ def do_run(run_number, trials):
         theme = trial['theme']
         cond = trial['cond']
         image = "images/image1/%s/%s_%s.png" % (cond, theme, trial_type)
+        print(image)
         pictureStim_image1.setImage(image)
         # send MESSAGE log event
         logging.log(level=logging.DATA, msg="MESSAGE: %s - %s - %s" % (cond, theme, trial_type))
@@ -257,8 +258,13 @@ def do_run(run_number, trials):
                 ratingStim[BUTTON_LABELS[resp_value]].setColor('red')
                 
                 # Logging: add response value to the trial handler logging
-                trials.addData('resp',resp_value)
-                trials.addData('rt', globalClock.getTime() - resp_onset)
+                pdb.set_trace()
+                # Why is the reponse being ovewritten by the next trial?? (2019/04/01)
+                # Note that the previous response is no unsaved. It IS overwritten.
+                trials.data.add('resp',resp_value)
+                trials.data.add('rt', globalClock.getTime() - resp_onset)
+                #trials.nextEntry() #not working...
+                pdb.set_trace()
         # End of the rating slide
         
         #Change to the next slide:---------------------------------
@@ -293,9 +299,16 @@ def do_run(run_number, trials):
     # Logging: Send END log event
     logging.log(level=logging.DATA, msg='******* END run %i *******' % run_number)
 
+    pdb.set_trace()
 
     # Save the trial infomation from trial handler
     log_filename2 = "%s_%i.csv" % (log_filename[:-4], run_number)
+    
+    # the data to write to csv is stored in "trials.data"
+    # (1) trials.data.addData(): 'stim_onset', 'resp_onset', 'resp', 'rt'
+    # - Comes from trials.data.addData()
+    # (2) from trials.extraInfo: 'Participant ID', 'Date', 'Description' 
+    # - Comes from 'run_data'
     trials.saveAsText(log_filename2, delim=',', dataOut=('n', 'all_raw')) #####FAIL with "-1"
     # Press 'space' to and the run (will move on to the next run if there is one)
     event.waitKeys(keyList=('space'))
