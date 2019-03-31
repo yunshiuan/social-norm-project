@@ -86,8 +86,8 @@ fixation = visual.TextStim(win,text='+', height=5, color="#FFFFFF") # Cross Fixa
 #            message (no message needed, we are using pictures with messages)
 
 #visual.ImageStim inherits the unit from "visual.Window (i.e., 'deg'")
-pictureStim_image1 = visual.ImageStim(win, pos=(0,6.5), size=(18,10) ) 
-pictureStim_image2 = visual.ImageStim(win, pos=(0,0), size=(36,20) )
+pictureStim_image1 = visual.ImageStim(win, pos=(0,6.5), size=(18,10)) 
+pictureStim_image2 = visual.ImageStim(win, pos=(0,0), size=(36,20))
 #  Response screen
 #           IMAGE (don't need)
 #        message (don't need)
@@ -134,7 +134,7 @@ for i in range(len(stimuli)):
     else:
         runs[1].append(stimuli[i])
 
-# The fixation durations are random integer between 1 and 5
+# The fixation durations are random integers between 1 and 5
 fixations = [[], []] 
 
 for j in range(len(stimuli)):
@@ -215,7 +215,7 @@ def do_run(run_number, trials):
         pictureStim_image1.setImage(image)
         # send MESSAGE log event
         logging.log(level=logging.DATA, msg="MESSAGE: %s - %s - %s" % (cond, theme, trial_type))
-        trials.addData('stim_onset', globalClock.getTime())
+        trials.data.add('stim_onset', globalClock.getTime())
         timer.reset()
         #Change to the next slide:---------------------------------
         # - "trial picture" for "MESSAGE_DUR" (3s)
@@ -225,7 +225,7 @@ def do_run(run_number, trials):
 
         # send SHOW RATING log event
         logging.log(level=logging.DATA, msg="SHOW RATING")
-        trials.addData('resp_onset', globalClock.getTime())
+        trials.data.add('resp_onset', globalClock.getTime())
 
         # clear event buffer
         event.clearEvents()
@@ -310,7 +310,10 @@ def do_run(run_number, trials):
 for idx, run in enumerate(runs): # 2 runs in total
     
     #print(run)
-    trials = data.TrialHandler(run, nReps=1, extraInfo=run_data, dataTypes=['stim_onset', 'resp_onset', 'rt', 'resp'], method="random")
+    #note the the input 'run' has already been raddomized, so it is okay to use 'sequential' here
+    trials = data.TrialHandler(run, nReps=1, extraInfo=run_data, 
+    dataTypes=['stim_onset', 'resp_onset', 'rt', 'resp'],
+    method='sequential') 
 
     nextrun = idx+1
     #print(trials)

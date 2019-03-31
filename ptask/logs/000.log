@@ -1,0 +1,15 @@
+7.3507 	DATA 	Keypress: t
+0.0000 	DATA 	******* START (trigger from scanner) - run 1 *******
+9.6624 	DATA 	MESSAGE: loss - Future - 2
+12.6767 	DATA 	SHOW RATING
+14.0638 	DATA 	Keypress: 2
+21.1616 	DATA 	FIXATION
+24.2762 	DATA 	MESSAGE: gain - Present - 1
+27.2791 	DATA 	SHOW RATING
+28.2490 	DATA 	Keypress: 3
+53.3504 	DATA 	FIXATION
+58.0700 	DATA 	Mouse: Left button down, pos=(1022,206)
+58.0863 	DATA 	Mouse:  Left button up, pos=(1022,206)
+58.4829 	DATA 	MESSAGE: loss - Present - 2
+61.4846 	DATA 	SHOW RATING
+62.1556 	DATA 	Keypress: 3
