@@ -61,3 +61,6 @@ target/
 *.DS_Store
 
 \.vscode/
+
+#Testing files
+ptask/test/
