@@ -56,7 +56,7 @@ INSTRUCT_DUR = 8 * FRAME_RATE
 
 #-File
 #This could be adjusted according to the number of stimulus
-FILE_STIMULI_LIST = 'stimuli_v2.csv' 
+FILE_STIMULI_LIST = 'stimuli.csv' 
 #################### Set up Environment ####################
 
 # get subjID
