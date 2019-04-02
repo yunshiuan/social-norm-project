@@ -62,5 +62,8 @@ target/
 
 \.vscode/
 
-#Testing files
+# Psychopy output
+*.log
+ptask/logs/*.csv
+# Testing files
 ptask/test/
