@@ -5,6 +5,12 @@
 # (1) Testing and commenting the codes based on "testCode.py"
 # (2) Modify the file for the social-norm task
 '''
+#(base) MBP15-3:~ vimchiz$ source /Users/vimchiz/anaconda3/bin/activate
+#(base) MBP15-3:~ vimchiz$ conda activate base
+#(base) MBP15-3:~ vimchiz$ /Users/vimchiz/anaconda3/bin/python3
+#Python 3.6.7 |Anaconda, Inc.| (default, Oct 23 2018, 14:01:38) 
+# Run this script with the specific verison of python:
+# > $ /Users/vimchiz/anaconda3/bin/python3 ptask_YunShiuan.py
 # Overview of the task:
 # (1) MESSAGE TASK for SES Persuasion Study
 # (2) Timings:
@@ -23,6 +29,7 @@ from psychopy import visual, core, event, gui, data, logging # imports libraries
 import datetime
 import random
 import sys
+import pdb
 
 
 
@@ -42,15 +49,14 @@ INSTRUCT_DUR = 8 * FRAME_RATE
 
 #-Path
 # #Change working directory to where the script locates
-import os
-os.getcwd()
-PATH_ROOT = '/Users/vimchiz/GitLab_local/social-norm-project/ptask'
-os.chdir(PATH_ROOT)
+#import os
+#os.getcwd()
+#PATH_ROOT = '/Users/vimchiz/GitLab_local/social-norm-project/ptask'
+#os.chdir(PATH_ROOT)
 
 #-File
 #This could be adjusted according to the number of stimulus
-FILE_STIMULI_LIST = 'stimuli.csv' 
-
+FILE_STIMULI_LIST = 'stimuli_v2.csv' 
 #################### Set up Environment ####################
 
 # get subjID
@@ -86,8 +92,8 @@ fixation = visual.TextStim(win,text='+', height=5, color="#FFFFFF") # Cross Fixa
 #            message (no message needed, we are using pictures with messages)
 
 #visual.ImageStim inherits the unit from "visual.Window (i.e., 'deg'")
-pictureStim_image1 = visual.ImageStim(win, pos=(0,6.5), size=(18,10) ) 
-pictureStim_image2 = visual.ImageStim(win, pos=(0,0), size=(36,20) )
+pictureStim_image1 = visual.ImageStim(win, pos=(0,6.5), size=(18,10)) 
+pictureStim_image2 = visual.ImageStim(win, pos=(0,0), size=(36,20))
 #  Response screen
 #           IMAGE (don't need)
 #        message (don't need)
@@ -128,20 +134,20 @@ runs = [[],[]]
 
 for i in range(len(stimuli)):
     # half of trials for the first run
-    if i<=len(stimuli)/2:
+    if i<len(stimuli)/2:
         runs[0].append(stimuli[i])#
     # half of trials for the second run
     else:
         runs[1].append(stimuli[i])
 
-# The fixation durations are random integer between 1 and 5
+# The fixation durations are random integers between 1 and 5
 fixations = [[], []] 
 
 for j in range(len(stimuli)):
     #random fixation times
     
     # half of trials for the first run
-    if j<=len(stimuli)/2:
+    if j<len(stimuli)/2:
         fixations[0].append(random.randint(1,5))
     # half of trials for the second run
     else:
@@ -205,13 +211,14 @@ def do_run(run_number, trials):
 
     # MAIN LOOP
     # present trials
-    for tidx, trial in enumerate(trials.trialList):
+    for tidx, trial in enumerate(trials):
         # Set up local parameters--------------------------------
         # Image 1---------------------
         trial_type = trial['type']
         theme = trial['theme']
         cond = trial['cond']
         image = "images/image1/%s/%s_%s.png" % (cond, theme, trial_type)
+        # print(image)
         pictureStim_image1.setImage(image)
         # send MESSAGE log event
         logging.log(level=logging.DATA, msg="MESSAGE: %s - %s - %s" % (cond, theme, trial_type))
@@ -257,8 +264,13 @@ def do_run(run_number, trials):
                 ratingStim[BUTTON_LABELS[resp_value]].setColor('red')
                 
                 # Logging: add response value to the trial handler logging
+                #pdb.set_trace()
+                # Why is the reponse being ovewritten by the next trial?? (2019/04/01)
+                # Note that the previous response is no unsaved. It IS overwritten.
                 trials.addData('resp',resp_value)
                 trials.addData('rt', globalClock.getTime() - resp_onset)
+                #trials.nextEntry() #not working...
+                #pdb.set_trace()
         # End of the rating slide
         
         #Change to the next slide:---------------------------------
@@ -293,10 +305,18 @@ def do_run(run_number, trials):
     # Logging: Send END log event
     logging.log(level=logging.DATA, msg='******* END run %i *******' % run_number)
 
+    #pdb.set_trace()
 
     # Save the trial infomation from trial handler
     log_filename2 = "%s_%i.csv" % (log_filename[:-4], run_number)
-    trials.saveAsText(log_filename2, delim=',', dataOut=('n', 'all_raw')) #####FAIL with "-1"
+    
+    # the data to write to csv is stored in "trials.data"
+    # (1) trials.addDataData(): 'stim_onset', 'resp_onset', 'resp', 'rt'
+    # - Comes from trials.addDataData()
+    # (2) from trials.extraInfo: 'Participant ID', 'Date', 'Description' 
+    # - Comes from 'run_data'
+    trials.saveAsWideText(log_filename2) 
+    #trials.saveAsText(log_filename2, delim=',', dataOut=('n', 'all_raw')) #####FAIL with "-1"
     # Press 'space' to and the run (will move on to the next run if there is one)
     event.waitKeys(keyList=('space'))
 
@@ -307,10 +327,14 @@ def do_run(run_number, trials):
 #sys.exit()
 #################### MAIN ####################
 
-for idx, run in enumerate(runs): # 2 runs in total
+for idx, this_run in enumerate(runs): # 2 runs in total
     
     #print(run)
-    trials = data.TrialHandler(run, nReps=1, extraInfo=run_data, dataTypes=['stim_onset', 'resp_onset', 'rt', 'resp'], method="random")
+    #note the the input 'run' has already been raddomized, so it is okay to use 'sequential' here
+    trials = data.TrialHandler2(this_run,1,extraInfo=run_data) 
+                                #dataTypes=['stim_onset', 'resp_onset', 'rt', 'resp'],
+                                #method='sequential') 
+    #pdb.set_trace()
 
     nextrun = idx+1
     #print(trials)

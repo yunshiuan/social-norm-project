@@ -1,0 +1,45 @@
+1.8508 	DATA 	Mouse: Left button down, pos=(621,297)
+1.8576 	DATA 	Mouse:  Left button up, pos=(621,297)
+2.1736 	DATA 	Keypress: t
+0.0000 	DATA 	******* START (trigger from scanner) - run 1 *******
+9.5877 	DATA 	MESSAGE: loss - Present - 1
+12.5943 	DATA 	SHOW RATING
+14.1738 	DATA 	Keypress: 2
+17.6576 	DATA 	FIXATION
+22.7223 	DATA 	MESSAGE: gain - Future - 2
+25.7259 	DATA 	SHOW RATING
+26.9450 	DATA 	Keypress: 3
+30.7599 	DATA 	FIXATION
+33.9799 	DATA 	Keypress: space
+35.8137 	DATA 	MESSAGE: loss - Future - 1
+36.2800 	DATA 	Keypress: 4
+38.8279 	DATA 	SHOW RATING
+39.1804 	DATA 	Keypress: 4
+43.8624 	DATA 	FIXATION
+47.9126 	DATA 	MESSAGE: gain - Present - 1
+48.7481 	DATA 	Keypress: 1
+50.9134 	DATA 	SHOW RATING
+51.2319 	DATA 	Keypress: 1
+55.9477 	DATA 	FIXATION
+58.1835 	DATA 	Keypress: space
+59.9484 	DATA 	******* END run 1 *******
+63.7187 	DATA 	Keypress: space
+71.0229 	DATA 	Keypress: t
+0.0000 	DATA 	******* START (trigger from scanner) - run 2 *******
+9.5627 	DATA 	MESSAGE: gain - Future - 1
+12.5789 	DATA 	SHOW RATING
+17.6493 	DATA 	FIXATION
+18.7128 	DATA 	MESSAGE: loss - Present - 2
+21.7131 	DATA 	SHOW RATING
+26.7465 	DATA 	FIXATION
+31.8107 	DATA 	MESSAGE: loss - Future - 2
+34.8161 	DATA 	SHOW RATING
+35.1681 	DATA 	Keypress: 3
+39.8475 	DATA 	FIXATION
+42.9150 	DATA 	MESSAGE: gain - Present - 2
+45.9160 	DATA 	SHOW RATING
+50.9850 	DATA 	FIXATION
+55.9970 	DATA 	******* END run 2 *******
+63.1015 	DATA 	Mouse: Left button down, pos=(406,186)
+63.1081 	DATA 	Mouse:  Left button up, pos=(406,186)
+63.1834 	DATA 	Keypress: space
