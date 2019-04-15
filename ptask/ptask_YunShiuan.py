@@ -9,8 +9,9 @@
 #(base) MBP15-3:~ vimchiz$ conda activate base
 #(base) MBP15-3:~ vimchiz$ /Users/vimchiz/anaconda3/bin/python3
 #Python 3.6.7 |Anaconda, Inc.| (default, Oct 23 2018, 14:01:38) 
-# Run this script with the specific verison of python:
+# In the bash terminal, run this script with the specific version of python:
 # > $ /Users/vimchiz/anaconda3/bin/python3 ptask_YunShiuan.py
+
 # Overview of the task:
 # (1) MESSAGE TASK for SES Persuasion Study
 # (2) Timings:
@@ -36,7 +37,7 @@ import pdb
 
 #################### Constants ####################
 #-Parameters
-# Switch to TRUE for real session 
+# Switch to TRUE for a real session 
 # (note that when using the fullscreen, it is hard to abort the sesion)
 USE_FULL_SCREEN = False 
 FRAME_RATE = 1
