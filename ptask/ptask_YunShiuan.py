@@ -20,10 +20,28 @@
 # In the social norms code, we need to run 72 loops of this sequence: 
 # Each run has 36 trials
 #-- fixation cross (1-5 seconds)
-#-- image1 (3 seconds)
-#---- trials: 72 (18 Future/Gain + 18 Future/Loss + 18 Present/Gain + 18 Present/Loss)
+#-- image1 (3 seconds)  and Descriptive 
+#---- trials: 72 (18 Active/Gain + 18 Active/Loss + 18 Present/Gain + 18 Present/Loss)
 #-- Feedback -- button box feedback  "Do you practice [norm]?" with a 1-4 Likert scale (2 seconds)
 #-- image2 (3 seconds) 
+
+# Update (request on 2019/04/10): 
+# (1) Instead of Gain/Loss, the folders are titled Injunctive/Descriptive.
+# (2) Instead of Future_1, Present_1, etc. the files are named Active_1, Sedentary_1, etc. 
+# (3) The second image presented in each loop (your filler is image_in_progress.png) must correspond to the first.
+# To make that easier, both the Injunctive and Descriptive folders contain two sub-folders.
+# One has all of the first images, the second has all of the corresponding second images.
+
+# Updated overview of the task:
+# (3)
+# In the social norms code, we need to run 72 loops of this sequence: 
+# Each run has 36 trials
+#-- fixation cross (1-5 seconds)
+#-- image1 (3 seconds)  and Descriptive 
+#---- trials: 72 (18 Active/Injunctive + 18 Active/Descriptive + 18 Sedentary/Injunctive + 18 Sedentary/Descriptive)
+#-- Feedback -- button box feedback  "Do you practice [norm]?" with a 1-4 Likert scale (2 seconds)
+#-- image2 (3 seconds) 
+
 # Import modules
 import csv #imports excel .csv files
 from psychopy import visual, core, event, gui, data, logging # imports libraries from psycho py
@@ -85,7 +103,7 @@ run_data = {
 win = visual.Window([1024,768], fullscr=USE_FULL_SCREEN, monitor='testMonitor', units='deg')
 
 # Define Stimulus
-ready_screen = visual.TextStim(win, text="Ready.....", height=1.5, color="#FFFFFF")
+ready_screen = visual.TextStim(win, text="Ready..... \n\n (Press 't' to continue)", height=1.5, color="#FFFFFF")
 fixation = visual.TextStim(win,text='+', height=5, color="#FFFFFF") # Cross Fixation
 
 # Message screen
@@ -117,6 +135,9 @@ anchor4 = visual.TextStim(win, text='Very\nOften', color="#FFFFFF", pos=(8,-6))
 instruction_text = visual.TextStim(win,height=1.3,color="#FFFFFF",
 text="Please view each message carefully. \n\nThen use the keypad to indicate how often you practice the activity. ",
     pos=(0,+5))
+
+# run-ending screen
+run_end_screen = visual.TextStim(win, text="Move on to the next run..... \n\n (Press 'SPACE' to continue)", height=1.5, color="#FFFFFF")
 
 
 test_instructions = visual.TextStim(win, text='', pos=(0,4), height=1.2, wrapWidth=20)
@@ -216,9 +237,9 @@ def do_run(run_number, trials):
         # Set up local parameters--------------------------------
         # Image 1---------------------
         trial_type = trial['type']
-        theme = trial['theme']
         cond = trial['cond']
-        image = "images/image1/%s/%s_%s.png" % (cond, theme, trial_type)
+        theme = trial['theme']
+        image = "images/%s/First Image/%s_%s.png" % (cond, theme, trial_type)
         # print(image)
         pictureStim_image1.setImage(image)
         # send MESSAGE log event
@@ -277,7 +298,7 @@ def do_run(run_number, trials):
         #Change to the next slide:---------------------------------
         # - image2 (3s)
         # show rating and collect response
-        image2 = "images/image2/image_in_progress.png"
+        image2 = "images/%s/Second Image/%s_%s.png" % (cond, theme, trial_type)
         pictureStim_image2.setImage(image2)
         timer.reset()        
         while timer.getTime() < MESSAGE_DUR:
@@ -317,9 +338,15 @@ def do_run(run_number, trials):
     # (2) from trials.extraInfo: 'Participant ID', 'Date', 'Description' 
     # - Comes from 'run_data'
     trials.saveAsWideText(log_filename2) 
+
+    # Show the run-ending slide
+    run_end_screen.draw()
+    win.flip()
+    
     #trials.saveAsText(log_filename2, delim=',', dataOut=('n', 'all_raw')) #####FAIL with "-1"
     # Press 'space' to and the run (will move on to the next run if there is one)
-    event.waitKeys(keyList=('space'))
+    event.waitKeys(keyList=('space'))    
+
 
 # =====================
 # MAIN
